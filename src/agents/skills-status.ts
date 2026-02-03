@@ -84,13 +84,28 @@ function selectPreferredInstallSpec(
     indexed.find((item) => item.spec.kind === kind);
 
   const brewSpec = findKind("brew");
+  const wingetSpec = findKind("winget");
+  const chocoSpec = findKind("choco");
+  const scoopSpec = findKind("scoop");
   const nodeSpec = findKind("node");
   const goSpec = findKind("go");
   const uvSpec = findKind("uv");
 
-  if (prefs.preferBrew && hasBinary("brew") && brewSpec) {
+  // Prefer platform-native package managers first
+  if (process.platform === "win32") {
+    if (hasBinary("winget") && wingetSpec) {
+      return wingetSpec;
+    }
+    if (hasBinary("choco") && chocoSpec) {
+      return chocoSpec;
+    }
+    if (hasBinary("scoop") && scoopSpec) {
+      return scoopSpec;
+    }
+  } else if (prefs.preferBrew && hasBinary("brew") && brewSpec) {
     return brewSpec;
   }
+
   if (uvSpec) {
     return uvSpec;
   }

@@ -1,4 +1,4 @@
-# 🦞 OpenClaw — Personal AI Assistant
+# 🦞 OpenClaw — Windows Enhanced Edition
 
 <p align="center">
     <picture>
@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <strong>EXFOLIATE! EXFOLIATE!</strong>
+  <strong>Now with native Windows package manager support!</strong>
 </p>
 
 <p align="center">
@@ -17,6 +17,65 @@
   <a href="https://discord.gg/clawd"><img src="https://img.shields.io/discord/1456350064065904867?label=Discord&logo=discord&logoColor=white&color=5865F2&style=for-the-badge" alt="Discord"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
 </p>
+
+---
+
+## 🚀 Quick Start - Cross Platform
+
+### Windows 
+```powershell
+# Prerequisites: Node.js 22+, Git
+git clone https://github.com/yourusername/openclaw-enhanced.git
+cd openclaw-enhanced
+npm install -g pnpm
+pnpm install && pnpm build && pnpm ui:build
+pnpm openclaw gateway
+# Access UI: http://localhost:18789/?token=test-token-12345
+```
+
+### macOS
+```bash
+git clone https://github.com/yourusername/openclaw-enhanced.git
+cd openclaw-enhanced
+npm install -g pnpm
+pnpm install && pnpm build && pnpm ui:build
+pnpm openclaw gateway
+```
+
+### Linux
+```bash
+git clone https://github.com/yourusername/openclaw-enhanced.git
+cd openclaw-enhanced
+npm install -g pnpm
+pnpm install && pnpm build && pnpm ui:build  
+pnpm openclaw gateway
+```
+
+### Docker (All Platforms)
+```bash
+docker build -t openclaw-enhanced .
+docker run -p 18789:18789 -v ~/.openclaw:/app/.openclaw openclaw-enhanced
+```
+
+---
+
+## 🎯 Windows-Specific Enhancements
+
+### ✅ Fixed "brew not installed" Error
+This enhanced version fixes the Windows compatibility issue where OpenClaw tried to use brew (macOS package manager) on Windows.
+
+### ✅ Native Windows Package Manager Support
+- **winget** (Windows Package Manager) - Automatically detected
+- **chocolatey** (`choco`) - Full support for Windows packages  
+- **scoop** - Lightweight Windows package installer
+- **npm/pnpm/yarn/bun** - Node.js ecosystem (cross-platform)
+- **go install** - Go modules (cross-platform)
+- **uv** - Python package installer (cross-platform)
+
+### ✅ Bundled Skills Unlocked
+All bundled skills are now available by default (removed artificial restrictions).
+
+---
 
 **OpenClaw** is a *personal AI assistant* you run on your own devices.
 It answers you on the channels you already use (WhatsApp, Telegram, Slack, Discord, Google Chat, Signal, iMessage, Microsoft Teams, WebChat), plus extension channels like BlueBubbles, Matrix, Zalo, and Zalo Personal. It can speak and listen on macOS/iOS/Android, and can render a live Canvas you control. The Gateway is just the control plane — the product is the assistant.

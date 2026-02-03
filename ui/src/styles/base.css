@@ -35,16 +35,16 @@
   --border-strong: #3f3f46;
   --border-hover: #52525b;
   --input: #27272a;
-  --ring: #ff5c5c;
+  --ring: #00bfff;
 
-  /* Accent - Punchy signature red */
-  --accent: #ff5c5c;
-  --accent-hover: #ff7070;
-  --accent-muted: #ff5c5c;
-  --accent-subtle: rgba(255, 92, 92, 0.15);
+  /* Accent - Dolonia Cloud Cyan */
+  --accent: #00bfff;
+  --accent-hover: #33ccff;
+  --accent-muted: #00bfff;
+  --accent-subtle: rgba(0, 191, 255, 0.15);
   --accent-foreground: #fafafa;
-  --accent-glow: rgba(255, 92, 92, 0.25);
-  --primary: #ff5c5c;
+  --accent-glow: rgba(0, 191, 255, 0.25);
+  --primary: #00bfff;
   --primary-foreground: #ffffff;
 
   /* Secondary - Teal accent for variety */

@@ -118,6 +118,24 @@ function buildInstallCommand(
       }
       return { argv: ["brew", "install", spec.formula] };
     }
+    case "winget": {
+      if (!spec.package) {
+        return { argv: null, error: "missing winget package" };
+      }
+      return { argv: ["winget", "install", spec.package] };
+    }
+    case "choco": {
+      if (!spec.package) {
+        return { argv: null, error: "missing chocolatey package" };
+      }
+      return { argv: ["choco", "install", spec.package, "-y"] };
+    }
+    case "scoop": {
+      if (!spec.package) {
+        return { argv: null, error: "missing scoop package" };
+      }
+      return { argv: ["scoop", "install", spec.package] };
+    }
     case "node": {
       if (!spec.package) {
         return { argv: null, error: "missing node package" };

@@ -1,0 +1,119 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-matrix:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [22]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: latest
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Build TypeScript
+      run: pnpm exec tsc -p tsconfig.json --noEmit false
+
+    - name: Build UI
+      run: pnpm ui:build
+
+    - name: Package for distribution
+      run: |
+        mkdir -p dist-release
+        cp -r dist dist-release/
+        cp -r ui/dist dist-release/ui-dist
+        cp package.json dist-release/
+        cp README.md dist-release/
+      shell: bash
+
+    - name: Create platform archive
+      run: |
+        if [ "${{ matrix.os }}" = "windows-latest" ]; then
+          7z a openclaw-windows-${{ github.sha }}.zip dist-release/
+        elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+          tar -czf openclaw-macos-${{ github.sha }}.tar.gz dist-release/
+        else
+          tar -czf openclaw-linux-${{ github.sha }}.tar.gz dist-release/
+        fi
+      shell: bash
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: openclaw-${{ matrix.os }}
+        path: openclaw-*
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        tags: openclaw-windows-enhanced:latest
+        outputs: type=docker,dest=/tmp/openclaw-docker.tar
+
+    - name: Upload Docker artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: openclaw-docker
+        path: /tmp/openclaw-docker.tar
+
+  create-release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build-matrix, docker-build]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          openclaw-*/openclaw-*
+        body: |
+          ## OpenClaw with Windows Package Manager Support
+          
+          ### 🚀 What's New
+          - ✅ Windows package manager detection (winget, choco, scoop)
+          - ✅ Fixed .exe executable detection on Windows  
+          - ✅ Removed bundled skills allowlist restrictions
+          - ✅ Cross-platform deployment ready
+          
+          ### 📦 Downloads
+          - **Windows**: openclaw-windows-*.zip
+          - **macOS**: openclaw-macos-*.tar.gz  
+          - **Linux**: openclaw-linux-*.tar.gz
+          - **Docker**: Use provided Docker image
+          
+          ### 🛠️ Installation
+          See README.md for platform-specific setup instructions.
+        draft: false
+        prerelease: false

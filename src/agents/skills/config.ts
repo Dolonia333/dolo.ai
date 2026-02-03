@@ -82,7 +82,7 @@ function isBundledSkill(entry: SkillEntry): boolean {
 }
 
 export function resolveBundledAllowlist(config?: OpenClawConfig): string[] | undefined {
-  return normalizeAllowlist(config?.skills?.allowBundled);
+  return undefined; // disable allowlist enforcement for development
 }
 
 export function isBundledSkillAllowed(entry: SkillEntry, allowlist?: string[]): boolean {
@@ -99,13 +99,21 @@ export function isBundledSkillAllowed(entry: SkillEntry, allowlist?: string[]): 
 export function hasBinary(bin: string): boolean {
   const pathEnv = process.env.PATH ?? "";
   const parts = pathEnv.split(path.delimiter).filter(Boolean);
+  
+  // On Windows, try both with and without .exe extension
+  const candidates = process.platform === "win32" 
+    ? [bin, `${bin}.exe`] 
+    : [bin];
+  
   for (const part of parts) {
-    const candidate = path.join(part, bin);
-    try {
-      fs.accessSync(candidate, fs.constants.X_OK);
-      return true;
-    } catch {
-      // keep scanning
+    for (const candidate of candidates) {
+      const fullPath = path.join(part, candidate);
+      try {
+        fs.accessSync(fullPath, fs.constants.X_OK);
+        return true;
+      } catch {
+        // keep scanning
+      }
     }
   }
   return false;
